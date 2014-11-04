@@ -1,14 +1,8 @@
 from jg.__main__ import main, generate_template_graph
+from mock import patch
 
 
-def test_main_returns_0_on_successful_execution():
-    assert main([]) == 0
-
-
-def test_parses_all_templates_in_given_root_directory():
-    dot = generate_template_graph(root_path='./tests/fixtures')
-    print(dot.source)
-    assert dot.source == (
+FIXTURE_GRAPH = (
         'digraph {\n'
         '\t"snippets/sub/analytics.html"\n'
         '\t"snippets/ga.html"\n'
@@ -22,3 +16,18 @@ def test_parses_all_templates_in_given_root_directory():
         '\t\t"index.html" -> "header.html"\n'
         '\t\t"index.html" -> "footer.html"\n'
         '\t"footer.html"\n}')
+
+
+def test_main_generates_graph_for_given_directory():
+    output_filename = 'graph.dot'
+    with patch('jg.__main__.write') as write:
+        exit_code = main(['./tests/fixtures', output_filename])
+
+    write.assert_called_with(FIXTURE_GRAPH, output_filename)
+    assert exit_code == 0
+
+
+def test_parses_all_templates_in_given_root_directory():
+    dot = generate_template_graph(root_path='./tests/fixtures')
+    dot.render('t1.dot')
+    assert dot.source == FIXTURE_GRAPH

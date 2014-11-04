@@ -21,9 +21,16 @@ def main(argv=()):
 
     Does stuff.
     """
+    root_path = argv[0]
+    output_filename = argv[1]
 
-    print(argv)
+    dot = generate_template_graph(root_path=root_path)
+    write(dot.source, output_filename)
     return 0
+
+
+def write(content, output_filename):
+    py.path.local(output_filename).write_text(content, ensure=True)
 
 
 def generate_template_graph(root_path):
