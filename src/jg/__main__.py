@@ -34,8 +34,7 @@ def main(argv=()):
         default='./output.dot',
         help=u'Output filename',
     )
-
-    args = parser.parse_args(argv)
+    args = parser.parse_args(argv or sys.argv[1:])
     root_path = args.i
     output_filename = args.o
 
