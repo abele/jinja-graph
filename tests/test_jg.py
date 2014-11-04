@@ -29,5 +29,4 @@ def test_main_generates_graph_for_given_directory():
 
 def test_parses_all_templates_in_given_root_directory():
     dot = generate_template_graph(root_path='./tests/fixtures')
-    dot.render('t1.dot')
     assert dot.source == FIXTURE_GRAPH
