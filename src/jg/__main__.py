@@ -35,9 +35,9 @@ def main(argv=()):
         help=u'Output filename',
     )
 
-    args = parser.parse_args()
-    root_path = args.i or args[0]
-    output_filename = args.o or argv[1]
+    args = parser.parse_args(argv)
+    root_path = args.i
+    output_filename = args.o
 
     dot = generate_template_graph(root_path=root_path)
     write(dot.source, output_filename)
