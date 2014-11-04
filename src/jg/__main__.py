@@ -1,6 +1,7 @@
 import re
 import sys
 from itertools import chain
+import argparse
 
 import py
 from graphviz import Digraph
@@ -21,16 +22,31 @@ def main(argv=()):
 
     Does stuff.
     """
-    root_path = argv[0]
-    output_filename = argv[1]
+    parser = argparse.ArgumentParser(
+        description=u'Generate Jinja template dependency graph')
+    parser.add_argument(
+        'i',
+        default='./',
+        help=u'Root path',
+    )
+    parser.add_argument(
+        'o',
+        default='./output.dot',
+        help=u'Output filename',
+    )
+
+    args = parser.parse_args()
+    root_path = args.i or args[0]
+    output_filename = args.o or argv[1]
 
     dot = generate_template_graph(root_path=root_path)
     write(dot.source, output_filename)
+
     return 0
 
 
 def write(content, output_filename):
-    py.path.local(output_filename).write_text(content, ensure=True)
+    py.path.local(output_filename).write(content, ensure=True)
 
 
 def generate_template_graph(root_path):
