@@ -42,8 +42,9 @@ def main(argv=()):
     parser.add_argument(
         "-p",
         "--print",
-        action="store_true",
-        help="Print the TOP 10 referenced items"
+        default=0,
+        type=int,
+        help="Print the TOP N referenced items, where N is the value passed in"
     )
 
     args = parser.parse_args(argv or sys.argv[1:])
@@ -52,7 +53,7 @@ def main(argv=()):
     TEMPLATE_PATTERN = f"*{args.extension}"
 
     dot = generate_template_graph(
-        root_path=root_path, template_pattern=TEMPLATE_PATTERN, reverse=args.reverse, print_top_10=args.print
+        root_path=root_path, template_pattern=TEMPLATE_PATTERN, reverse=args.reverse, print_top_N=args.print
     )
 
     write(dot.source, output_filename)
@@ -64,7 +65,7 @@ def write(content, output_filename):
     py.path.local(output_filename).write(content, ensure=True)
 
 
-def generate_template_graph(root_path, template_pattern: str, reverse: bool = False, print_top_10: bool = False):
+def generate_template_graph(root_path, template_pattern: str, reverse: bool = False, print_top_N: int = 0):
     cwd = py.path.local(root_path)
     node_name_and_template_path = (
         (_node_name(path, cwd), path)
@@ -99,8 +100,8 @@ def generate_template_graph(root_path, template_pattern: str, reverse: bool = Fa
         for item in dictionary.get(key):
             dot.edge(item.get('source'), item.get('target'))
 
-    if print_top_10:
-        print(' '.join(sorted(dictionary, key=lambda k: len(dictionary[k]), reverse=True)[:10]))
+    if print_top_N > 0:
+        print(' '.join(sorted(dictionary, key=lambda k: len(dictionary[k]), reverse=True)[:print_top_N]))
 
     return dot
 
